@@ -1212,6 +1212,16 @@ const ApiOptions = ({
 							Get Databricks Access Token
 						</VSCodeButtonLink>
 					)}
+					<VSCodeTextField
+						value={apiConfiguration?.databricksModelId || ""}
+						onInput={handleInputChange("databricksModelId")}
+						placeholder="e.g. databricks-meta-llama-3-1-8b-instruct"
+						className="w-full">
+						<span className="font-medium">Model ID</span>
+					</VSCodeTextField>
+					<div className="text-sm text-vscode-descriptionForeground -mt-2">
+						The model ID from your Databricks serving endpoint (e.g. databricks-meta-llama-3-1-8b-instruct).
+					</div>
 				</>
 			)}
 
@@ -1648,8 +1658,14 @@ export function normalizeApiConfiguration(apiConfiguration?: ApiConfiguration) {
 		case "databricks":
 			return {
 				selectedProvider: provider,
-				selectedModelId: apiConfiguration?.databricksModelId || "",
-				selectedModelInfo: openAiModelInfoSaneDefaults,
+				selectedModelId: apiConfiguration?.databricksModelId || "databricks-meta-llama-3-1-8b-instruct",
+				selectedModelInfo: {
+					...openAiModelInfoSaneDefaults,
+					maxTokens: 4096,
+					contextWindow: 128000,
+					supportsImages: true,
+					supportsPromptCache: false,
+				},
 			}
 		default:
 			return getProviderData(anthropicModels, anthropicDefaultModelId)
