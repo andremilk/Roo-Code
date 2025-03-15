@@ -20,6 +20,7 @@ import { ApiStream } from "./transform/stream"
 import { UnboundHandler } from "./providers/unbound"
 import { RequestyHandler } from "./providers/requesty"
 import { HumanRelayHandler } from "./providers/human-relay"
+import { DatabricksProvider } from "./providers/databricks"
 
 export interface SingleCompletionHandler {
 	completePrompt(prompt: string): Promise<string>
@@ -75,6 +76,8 @@ export function buildApiHandler(configuration: ApiConfiguration): ApiHandler {
 			return new RequestyHandler(options)
 		case "human-relay":
 			return new HumanRelayHandler(options)
+		case "databricks":
+			return new DatabricksProvider(options)
 		default:
 			return new AnthropicHandler(options)
 	}

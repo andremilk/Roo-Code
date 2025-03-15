@@ -17,6 +17,7 @@ export type ApiProvider =
 	| "unbound"
 	| "requesty"
 	| "human-relay"
+	| "databricks"
 
 export interface ApiHandlerOptions {
 	apiModelId?: string
@@ -28,6 +29,9 @@ export interface ApiHandlerOptions {
 	glamaApiKey?: string
 	openRouterApiKey?: string
 	openRouterModelId?: string
+	databricksBaseUrl?: string
+	databricksApiKey?: string
+	databricksModelId?: string
 	openRouterModelInfo?: ModelInfo
 	openRouterBaseUrl?: string
 	awsAccessKey?: string
