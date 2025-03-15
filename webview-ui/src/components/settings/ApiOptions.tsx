@@ -64,6 +64,7 @@ const providers = [
 	{ value: "openai", label: "OpenAI Compatible" },
 	{ value: "vertex", label: "GCP Vertex AI" },
 	{ value: "bedrock", label: "AWS Bedrock" },
+	{ value: "databricks", label: "Databricks" },
 	{ value: "glama", label: "Glama" },
 	{ value: "vscode-lm", label: "VS Code LM API" },
 	{ value: "mistral", label: "Mistral" },
@@ -1183,6 +1184,37 @@ const ApiOptions = ({
 				</>
 			)}
 
+			{selectedProvider === "databricks" && (
+				<>
+					<VSCodeTextField
+						value={apiConfiguration?.databricksBaseUrl || ""}
+						type="url"
+						onInput={handleInputChange("databricksBaseUrl")}
+						placeholder="Enter Databricks Host..."
+						className="w-full">
+						<span className="font-medium">Databricks Host</span>
+					</VSCodeTextField>
+					<VSCodeTextField
+						value={apiConfiguration?.databricksApiKey || ""}
+						type="password"
+						onInput={handleInputChange("databricksApiKey")}
+						placeholder="Enter Access Token..."
+						className="w-full">
+						<span className="font-medium">Databricks Access Token</span>
+					</VSCodeTextField>
+					<div className="text-sm text-vscode-descriptionForeground -mt-2">
+						This token is stored locally and only used to make API requests from this extension.
+					</div>
+					{!apiConfiguration?.databricksApiKey && (
+						<VSCodeButtonLink
+							href="https://docs.databricks.com/en/dev-tools/auth.html#personal-access-tokens"
+							appearance="secondary">
+							Get Databricks Access Token
+						</VSCodeButtonLink>
+					)}
+				</>
+			)}
+
 			{selectedProvider === "deepseek" && (
 				<>
 					<VSCodeTextField
@@ -1612,6 +1644,12 @@ export function normalizeApiConfiguration(apiConfiguration?: ApiConfiguration) {
 					...openAiModelInfoSaneDefaults,
 					supportsImages: false, // VSCode LM API currently doesn't support images.
 				},
+			}
+		case "databricks":
+			return {
+				selectedProvider: provider,
+				selectedModelId: apiConfiguration?.databricksModelId || "",
+				selectedModelInfo: openAiModelInfoSaneDefaults,
 			}
 		default:
 			return getProviderData(anthropicModels, anthropicDefaultModelId)
