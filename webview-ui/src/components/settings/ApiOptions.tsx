@@ -66,6 +66,7 @@ const providers = [
 	{ value: "openai", label: "OpenAI Compatible" },
 	{ value: "vertex", label: "GCP Vertex AI" },
 	{ value: "bedrock", label: "AWS Bedrock" },
+	{ value: "databricks", label: "Databricks" },
 	{ value: "glama", label: "Glama" },
 	{ value: "vscode-lm", label: "VS Code LM API" },
 	{ value: "mistral", label: "Mistral" },
@@ -1210,6 +1211,47 @@ const ApiOptions = ({
 				</>
 			)}
 
+			{selectedProvider === "databricks" && (
+				<>
+					<VSCodeTextField
+						value={apiConfiguration?.databricksBaseUrl || ""}
+						type="url"
+						onInput={handleInputChange("databricksBaseUrl")}
+						placeholder="Enter Databricks Host..."
+						className="w-full">
+						<span className="font-medium">Databricks Host</span>
+					</VSCodeTextField>
+					<VSCodeTextField
+						value={apiConfiguration?.databricksApiKey || ""}
+						type="password"
+						onInput={handleInputChange("databricksApiKey")}
+						placeholder="Enter Access Token..."
+						className="w-full">
+						<span className="font-medium">Databricks Access Token</span>
+					</VSCodeTextField>
+					<div className="text-sm text-vscode-descriptionForeground -mt-2">
+						This token is stored locally and only used to make API requests from this extension.
+					</div>
+					{!apiConfiguration?.databricksApiKey && (
+						<VSCodeButtonLink
+							href="https://docs.databricks.com/en/dev-tools/auth.html#personal-access-tokens"
+							appearance="secondary">
+							Get Databricks Access Token
+						</VSCodeButtonLink>
+					)}
+					<VSCodeTextField
+						value={apiConfiguration?.databricksModelId || ""}
+						onInput={handleInputChange("databricksModelId")}
+						placeholder="e.g. databricks-meta-llama-3-1-8b-instruct"
+						className="w-full">
+						<span className="font-medium">Model ID</span>
+					</VSCodeTextField>
+					<div className="text-sm text-vscode-descriptionForeground -mt-2">
+						The model ID from your Databricks serving endpoint (e.g. databricks-meta-llama-3-1-8b-instruct).
+					</div>
+				</>
+			)}
+
 			{selectedProvider === "deepseek" && (
 				<>
 					<VSCodeTextField
@@ -1622,6 +1664,18 @@ export function normalizeApiConfiguration(apiConfiguration?: ApiConfiguration) {
 				selectedModelInfo: {
 					...openAiModelInfoSaneDefaults,
 					supportsImages: false, // VSCode LM API currently doesn't support images.
+				},
+			}
+		case "databricks":
+			return {
+				selectedProvider: provider,
+				selectedModelId: apiConfiguration?.databricksModelId || "databricks-meta-llama-3-1-8b-instruct",
+				selectedModelInfo: {
+					...openAiModelInfoSaneDefaults,
+					maxTokens: 4096,
+					contextWindow: 128000,
+					supportsImages: true,
+					supportsPromptCache: false,
 				},
 			}
 		default:
